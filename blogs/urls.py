@@ -1,11 +1,11 @@
 from django.urls import path
-from blogs.views import register, profile
+from blogs.views import change_password, register, profile
 
 
 app_name = "blogs"
 
 urlpatterns = [
     path('profile/<str:username>/', profile, name='profile'),
-    path('register/', register, name='register'),
-    
+    path('change-password/<str:username>/', change_password, name='change-password'),
+    path('register/', register, name='register'),   
 ]

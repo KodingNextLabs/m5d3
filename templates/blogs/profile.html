@@ -11,6 +11,9 @@
         <h1>Halo, {{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
         <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+        <p>
+            <a href="{% url 'blogs:change-password' user.username %}">Change Password</a>
+        </p>
     </div>
 </body>
 </html>
