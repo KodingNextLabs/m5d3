@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from blogs.models import Post
 from django import forms
 from django.http.response import HttpResponse
@@ -9,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from blogs.forms import RegisterForm
 from django.contrib.auth.models import Permission, User
 from django.http import Http404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.views import View
 
 # Create your views here.
@@ -121,31 +122,43 @@ def add_post(request):
         return HttpResponse("Ups! anda tidak boleh nambahin data!")
 
 
-@login_required(login_url='/blogs/add-post/')
+# @login_required(login_url='/blogs/add-post/')
+@permission_required('blogs.view_post', raise_exception=True)
 def test_post(request):
     user = request.user
 
     # @permission_required('polls.add_choice', login_url='/loginpage/')
     # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-permission-required-decorator
 
-    if user.has_perm('blogs.uya_post'):
-        return HttpResponse("Hore")
-    else:
-        return HttpResponse("Sorry! you ga level!")
+    return HttpResponse("Hore")
 
 
-class TestPost(View):
+class TestPost(PermissionRequiredMixin, View):
+    permission_required = 'blogs.add_post'
+    # raise_exception = True
     
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     
     def get(self, request):
-        user = request.user
-        if user.has_perm('blogs.uya_post'):
-            return HttpResponse("Hore")
-        else:
-            return HttpResponse("Sorry! you ga level!")
+        return HttpResponse("Hore")
     
     def post(self, request):
         return HttpResponse("Ini adalah post!")
+
+
+def validate_jaroom(user):
+    return user.email.endswith('@jayaabadi.com')
+
+
+@user_passes_test(validate_jaroom, login_url='/admin/')
+def ja_room(request):
+    return HttpResponse('Selamat datang di Jaroom!')
+
+class JARoom(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.email.endswith('@jayaabadi.com')
+
+    def get(self, request):
+        return HttpResponse("Hore")
