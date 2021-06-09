@@ -1,5 +1,5 @@
 from django.urls import path
-from blogs.views import add_permission, change_password, register, profile
+from blogs.views import add_permission, add_post, change_password, register, profile, test_post
 
 
 app_name = "blogs"
@@ -7,6 +7,8 @@ app_name = "blogs"
 urlpatterns = [
     path('profile/<str:username>/', profile, name='profile'),
     path('change-password/<str:username>/', change_password, name='change-password'),
-    path('register/', register, name='register'),   
+    path('accounts/login/', register, name='register'),   
     path('add-permissions/<str:username>/', add_permission, name='add-permissions'),
+    path('add-post/', add_post, name='add-post'),
+    path('test-post/', test_post, name='test-post'),
 ]

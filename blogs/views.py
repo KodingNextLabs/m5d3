@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from blogs.forms import RegisterForm
 from django.contrib.auth.models import Permission, User
 from django.http import Http404
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -87,7 +88,7 @@ def change_password(request, username):
 def add_permission(request, username):
     """
     https://docs.djangoproject.com/en/3.2/topics/auth/default/#permission-caching
-    
+
     myuser.groups.set([group_list])
     myuser.groups.add(group, group, ...)
     myuser.groups.remove(group, group, ...)
@@ -105,3 +106,28 @@ def add_permission(request, username):
     )
     user.user_permissions.add(permission)
     return HttpResponse(user.has_perm('blogs.add_post'))
+
+
+def add_post(request):
+    user = request.user
+
+    if user.has_perm('blogs.add_post'):
+        Post.objects.create(title='Nambahin ah! hahahahaha hacker nih!')
+        return HttpResponse("Hahahaha")
+    else:
+        return HttpResponse("Ups! anda tidak boleh nambahin data!")
+
+
+@login_required(login_url='/blogs/add-post/')
+def test_post(request):
+    user = request.user
+
+    # @permission_required('polls.add_choice', login_url='/loginpage/')
+    # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-permission-required-decorator
+
+    if user.has_perm('blogs.uya_post'):
+        return HttpResponse("Hore")
+    else:
+        return HttpResponse("Sorry! you ga level!")
+
+    
