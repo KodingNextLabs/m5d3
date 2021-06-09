@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from blogs.models import Post
 from django import forms
 from django.http.response import HttpResponse
@@ -8,6 +10,7 @@ from blogs.forms import RegisterForm
 from django.contrib.auth.models import Permission, User
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 # Create your views here.
 
@@ -130,4 +133,19 @@ def test_post(request):
     else:
         return HttpResponse("Sorry! you ga level!")
 
+
+class TestPost(View):
     
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request):
+        user = request.user
+        if user.has_perm('blogs.uya_post'):
+            return HttpResponse("Hore")
+        else:
+            return HttpResponse("Sorry! you ga level!")
+    
+    def post(self, request):
+        return HttpResponse("Ini adalah post!")
