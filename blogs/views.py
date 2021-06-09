@@ -1,8 +1,11 @@
+from blogs.models import Post
 from django import forms
+from django.http.response import HttpResponse
 from blogs.forms import ChangePasswordForm, RegisterForm
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.contenttypes.models import ContentType
 from blogs.forms import RegisterForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.http import Http404
 
 # Create your views here.
@@ -80,3 +83,25 @@ def change_password(request, username):
     else:
         form = ChangePasswordForm()
         return render(request, 'blogs/change_password.html', {'form': form})
+
+def add_permission(request, username):
+    """
+    https://docs.djangoproject.com/en/3.2/topics/auth/default/#permission-caching
+    
+    myuser.groups.set([group_list])
+    myuser.groups.add(group, group, ...)
+    myuser.groups.remove(group, group, ...)
+    myuser.groups.clear()
+    myuser.user_permissions.set([permission_list])
+    myuser.user_permissions.add(permission, permission, ...)
+    myuser.user_permissions.remove(permission, permission, ...)
+    myuser.user_permissions.clear()
+    """
+    user = get_object_or_404(User, username=username)
+    content_type = ContentType.objects.get_for_model(Post)
+    permission = Permission.objects.get(
+        codename='view_post',
+        content_type=content_type,
+    )
+    user.user_permissions.add(permission)
+    return HttpResponse(user.has_perm('blogs.add_post'))
