@@ -1,9 +1,12 @@
+from django.urls.base import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from blogs.models import Post
 from django.core.mail import send_mail
-from django.views.generic.edit import FormView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django import forms
 from django.http.response import HttpResponse
 from blogs.forms import ChangePasswordForm, RegisterForm, SubscribeForm
@@ -188,3 +191,41 @@ class SubscribeFormView(FormView):
         )
         form.send_email()
         return super().form_valid(form)
+
+
+class PostListView(ListView):
+    model = Post
+    paginate_by = 2  # if pagination is desired
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['now'] = timezone.now()
+    #     return context
+
+class PostCreateView(CreateView):
+    model = Post
+    fields = ['title']
+    success_url = reverse_lazy('blogs:post-list')
+
+
+class PostDetailView(DetailView):
+
+    model = Post
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['now'] = timezone.now()
+    #     return context
+
+
+class PostUpdateView(UpdateView):
+    model = Post
+    fields = ['title']
+    success_url = reverse_lazy('blogs:post-list')
+    # template_name_suffix = '_update_form'
+
+
+class PostDeleteView(DeleteView):
+    model = Post
+    success_url = reverse_lazy('blogs:post-list')
+
