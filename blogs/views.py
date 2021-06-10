@@ -156,6 +156,7 @@ def validate_jaroom(user):
 def ja_room(request):
     return HttpResponse('Selamat datang di Jaroom!')
 
+
 class JARoom(UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.email.endswith('@jayaabadi.com')
