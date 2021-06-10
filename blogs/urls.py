@@ -1,5 +1,5 @@
 from django.urls import path
-from blogs.views import JARoom, TestPost, add_permission, add_post, change_password, ja_room, register, profile, test_post
+from blogs.views import JARoom, SubscribeFormView, TestPost, add_permission, add_post, change_password, ja_room, register, profile, test_post, thanks
 
 
 app_name = "blogs"
@@ -12,4 +12,6 @@ urlpatterns = [
     path('add-post/', add_post, name='add-post'),
     path('test-post/', TestPost.as_view(), name='test-post'),
     path('ja-room/', JARoom.as_view(), name='ja-room'),
+    path('thanks/', thanks, name='thanks'),
+    path('subscribe/', SubscribeFormView.as_view(), name='subscribe'),
 ]

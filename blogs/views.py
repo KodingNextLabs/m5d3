@@ -2,9 +2,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from blogs.models import Post
+from django.core.mail import send_mail
+from django.views.generic.edit import FormView
 from django import forms
 from django.http.response import HttpResponse
-from blogs.forms import ChangePasswordForm, RegisterForm
+from blogs.forms import ChangePasswordForm, RegisterForm, SubscribeForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.contenttypes.models import ContentType
 from blogs.forms import RegisterForm
@@ -163,3 +165,26 @@ class JARoom(UserPassesTestMixin, View):
 
     def get(self, request):
         return HttpResponse("Hore")
+
+
+def thanks(request):
+    return HttpResponse("Thanks subscribe my blog!")
+
+
+class SubscribeFormView(FormView):
+    template_name = 'blogs/subscribe.html'
+    form_class = SubscribeForm
+    success_url = '/blogs/thanks/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        send_mail(
+            'Thanks Subscribe!',
+            'Lorem ipsum bla bla bla.',
+            'admin@example.com',
+            [form.cleaned_data.get('email')],
+            fail_silently=False,
+        )
+        form.send_email()
+        return super().form_valid(form)

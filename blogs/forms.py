@@ -1,5 +1,13 @@
 from django import forms
 
+
+class SubscribeForm(forms.Form):
+    email = forms.EmailField()
+
+    def send_email(self):
+        pass
+
+
 class RegisterForm(forms.Form):
     LEVEL_CHOICES = (
         ("1", 'Superadmin'),
