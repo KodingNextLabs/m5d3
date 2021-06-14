@@ -20,6 +20,7 @@ from django.views import View
 
 # Create your views here.
 
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -197,10 +198,10 @@ class PostListView(ListView):
     model = Post
     paginate_by = 2  # if pagination is desired
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['now'] = timezone.now()
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = "Halo Dunia"
+        return context
 
 class PostCreateView(CreateView):
     model = Post
